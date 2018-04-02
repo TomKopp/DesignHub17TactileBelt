@@ -1,48 +1,54 @@
 #pragma once
 
-#include <Arduino.h>
-#include "Config.h"
+#include "stdafx.h"
 #include "Motor.h"
+#include "TactileSettings.h"
 
 namespace DesignHub
 {
 class TactileBelt
 {
 private:
-  Motor *motors[MOTORSCOUNT];
-
-  // In milliseconds
-  unsigned long lastTick = 0;
-  unsigned long debounceDelay = 50;
+  std::map<int, Motor *> _motors;
+  TactileSettings *_settings = nullptr;
 
 public:
-  TactileBelt()
+  bool addMotor(int motorId, int motorPin)
   {
-    motors[0] = new Motor(15);
-    motors[1] = new Motor(16);
-    motors[2] = new Motor(17);
+    Motor *tmp = new Motor(motorPin);
+
+    auto result = _motors.insert(std::pair<int, Motor *>(motorId, tmp));
+
+    return result.second;
   }
 
-  void update()
+  void update(TactileSettings *settings)
   {
-  }
-
-  bool shouldRender()
-  {
-    if ((millis() - lastTick) > debounceDelay)
+    if (settings != nullptr)
     {
-      lastTick = millis();
-      return true;
+      delete _settings;
+      _settings = settings;
+    }
+    if (_settings == nullptr)
+    {
+      return;
     }
 
-    return false;
+    for (const auto &el : _motors)
+    {
+      int force = _settings->getForce(el.first);
+      if (force != -1)
+      {
+        el.second->force = force;
+      }
+    }
   }
 
   void render()
   {
-    for (byte i = 0; i < MOTORSCOUNT; i++)
+    for (const auto &el : _motors)
     {
-      motors[i]->render();
+      el.second->render();
     }
   }
 };

@@ -1,23 +1,23 @@
-#include <Arduino.h>
+#include "stdafx.h"
+#include "Config.h"
 #include "TactileBelt.h"
-#include "Motor.h"
+#include "TactileSettings.h"
 
 using namespace DesignHub;
 
-unsigned long lastTick = 0;
-unsigned long debounceDelay = 50;
-
-const int pin_Led = 13;
-int status_Led = LOW;
-
 TactileBelt *Belt;
+unsigned long nextTick = millis();
+int skippedFrames;
 
+/**
+ * Setup
+ */
 void setup()
 {
-  pinMode(pin_Led, OUTPUT);
-  digitalWrite(pin_Led, status_Led);
-
   Belt = new TactileBelt();
+  Belt->addMotor(0, 15);
+  Belt->addMotor(1, 16);
+  Belt->addMotor(2, 17);
 
   Serial.begin(57600);
 
@@ -27,6 +27,9 @@ void setup()
   Serial.print("You're connected.");
 }
 
+/**
+ * Loop
+ */
 void loop()
 {
   // read Serial
@@ -34,13 +37,23 @@ void loop()
 
   // split String
   // parse String
-  Belt->update();
-  if (Belt->shouldRender())
+
+  skippedFrames = 0;
+  while (millis() > nextTick && skippedFrames < MAX_SKIPPEDFRAMES)
   {
-    Belt->render();
+    // new TactileSettings()
+    Belt->update(nullptr);
+
+    nextTick += DEBOUNCEDELAY;
+    skippedFrames++;
   }
+
+  Belt->render();
 }
 
+/**
+ * SerialEvent
+ */
 void serialEvent()
 {
   while (Serial.available())

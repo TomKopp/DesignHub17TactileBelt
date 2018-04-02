@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Arduino.h>
+#include "stdafx.h"
 
 namespace DesignHub
 {
@@ -8,10 +8,10 @@ class Motor
 {
 private:
   const int p;
+  int _lastForce = 0;
 
 public:
-  bool active = false;
-  char force = 0;
+  int force = 0;
 
 public:
   Motor(int pin) : p(pin)
@@ -21,16 +21,11 @@ public:
 
   void render()
   {
-    if (active)
-    {
-      // digitalWrite(p, HIGH);
+      if (_lastForce == force)
+        return;
+
       analogWrite(p, force);
-    }
-    else
-    {
-      // digitalWrite(p, LOW);
-      analogWrite(p, 0);
-    }
+      _lastForce = force;
   }
 };
 }
