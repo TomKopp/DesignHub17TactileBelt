@@ -22,6 +22,11 @@ public:
     return result.second;
   }
 
+  void setMotorForce(int motorId, int force)
+  {
+    _motors.at(motorId)->force = force;
+  }
+
   void update(TactileSettings *settings)
   {
     if (settings != nullptr)
