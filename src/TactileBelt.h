@@ -27,13 +27,14 @@ public:
     _motors.at(motorId)->force = force;
   }
 
-  void update(TactileSettings *settings)
+  void setSettings(TactileSettings *settings)
   {
-    if (settings != nullptr)
-    {
-      delete _settings;
-      _settings = settings;
-    }
+    delete _settings;
+    _settings = settings;
+  }
+
+  void update()
+  {
     if (_settings == nullptr)
     {
       return;
@@ -41,11 +42,7 @@ public:
 
     for (const auto &el : _motors)
     {
-      int force = _settings->getForce(el.first);
-      if (force != -1)
-      {
-        el.second->force = force;
-      }
+      el.second->force = _settings->getForce(el.first);
     }
   }
 
