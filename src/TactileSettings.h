@@ -4,7 +4,7 @@
 
 namespace DesignHub
 {
-typedef std::pair<int, std::list<int>> motorForcesPair;
+typedef std::pair<int, std::list<int>> motorIdForcesPair;
 
 class TactileSettings
 {
@@ -14,13 +14,12 @@ private:
 public:
   // TactileSettings()
   // {
+  //   Serial.println("new Settings");
   // }
 
   void appendForce(int motorId, int force)
   {
-    motorForcesPair ElemToBeAdded(motorId, std::list<int>(force));
-    // std::pair<std::map<int, std::list<int>>::iterator, bool>
-    auto result = _motorForcesPerId.insert(ElemToBeAdded);
+    auto result = _motorForcesPerId.insert(motorIdForcesPair(motorId, std::list<int>(1, force)));
 
     // Motor already exists
     if (result.second == false)
@@ -28,18 +27,26 @@ public:
       // The first elem of the pair is an iterator that is a pair<const key_type, mapped_type>.
       // "result.first->second" is the list.
       // "ElemToBeAdded.second" is the input-list.
-      result.first->second.push_back(ElemToBeAdded.second.front());
+      // result.first->second.push_back(ElemToBeAdded.second.front());
+      result.first->second.push_back(force);
     }
+
+    // Serial.print(" motor: ");
+    // Serial.print(result.first->first);
+    // Serial.print(" force: ");
+    // Serial.println(result.first->second.back());
+    // Serial.flush();
   }
 
-  int getForce(int motorId) {
+  int getForce(int motorId)
+  {
     auto result = _motorForcesPerId.find(motorId);
     if (result == _motorForcesPerId.end() || result->second.empty())
     {
-      return -1;
+      return 0;
     }
 
-    auto ret = result->second.front();
+    int ret = result->second.front();
     result->second.pop_front();
     return ret;
   }
