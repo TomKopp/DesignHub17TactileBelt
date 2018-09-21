@@ -94,7 +94,7 @@ void setup()
   Belt->addMotor(4, 12);
   Belt->addMotor(5, 11);
   Belt->addMotor(6, 10);
-  Belt->addMotor(7, 9);
+  Belt->addMotor(7, 6);
 
   forceCharBuffer.reserve(FORCE_CHAR_BUFFER_SIZE);
 
