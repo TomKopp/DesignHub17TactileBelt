@@ -34,9 +34,9 @@ Motor ID:Pin
 				back
 ```
 
-## Instalation
+## Installation
 
-This is a Platform.io project.
+This is a [Platform.io](https://platformio.org/) project.
 It is preconfigured for an adafruit_feather_m0 microcontroller.
 
 If you use VS Code or Atome IDE with the Platform.io plugin you only need to `build` and `upload` the project to your Feather M0.
